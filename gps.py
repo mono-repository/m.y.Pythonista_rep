@@ -1,8 +1,6 @@
 # -*- coding:utf-8 -*-
 import ui, location, csv, datetime, time
 
-# GPSデータを日付＋実データとして保存し、CSVに書き込む
-
 
 def GetInfo():
     location.start_updates()  # GPSデータ更新を開始
@@ -23,8 +21,12 @@ def New(sender):
     # GetInfo からデータを取得
     gps, gps_text, now = GetInfo()
 
-    # 2.GPSデータを画面に表示
-    label.text = now + "\n" + gps_text  # UIのテキストビューにGPSデータを表示
+    # テキストデータがある場合は、それに追加する形で表示
+    if label.text:
+        pre_text = label.text
+        label.text = pre_text + "\n" + now + "\n" + gps_text
+    else:
+        label.text = now + "\n" + gps_text
 
     # 3-1.GPSデータを編集して、csvファイルに保存
     gps_dict = {"time": now + ","}  # GPSデータはディクショナリ型
@@ -55,13 +57,37 @@ def Add(sender):
     label = sender.superview["label1"]
     gps, gps_text, now = GetInfo()
 
+    # 既存のデータを読み込む
+
 
 # 保存していたCSVファイルを初期化
 def Clear(sender):
     with open("gps_log.csv", mode="w", encoding="utf-8") as f:
         f.write("")
     # ラベルに初期化したことを表示
-    sender.superview["label1"].text = "初期化しました"
+    sender.superview["label1"].text = ""
+    show_alert(sender.superview, "データを初期化しました。")
+
+    # # 5秒後にラベルを空白にする
+    # ui.delay(lambda: label_update(sender), 10)
+
+    # def label_update(sender):
+    #     sender.superview["label1"].text = ""
+
+
+def show_alert(view, message, duration=3):
+    # ラベルを作成して画面の上に表示
+    message_label = ui.Label(frame=(0, 0, view.width, 32))
+    message_label.text = message
+    message_label.alignment = ui.ALIGN_CENTER
+    message_label.background_color = "lightgray"
+    message_label.text_color = "black"
+
+    # ラベルをviewに追加
+    view.add_subview(message_label)
+
+    # 指定された時間後にラベルを削除する
+    ui.delay(lambda: view.remove_subview(message_label), duration)
 
 
 # UIの読み込みと表示
