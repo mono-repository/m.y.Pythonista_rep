@@ -18,10 +18,16 @@ def PrintChar(txt: Union[str, int, float]) -> None:
     for character in txt:
         print(character, end="\n")
 
+    return txt
+
 
 if __name__ == "__main__":
+    txt = ""
     PrintChar(341)
     print("\n")
     PrintChar("Hello")
     print("\n")
-    PrintChar(3.13)
+    PrintChar(3.14)
+
+    print(txt)
+    print(type(txt))
